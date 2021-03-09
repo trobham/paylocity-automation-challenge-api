@@ -1,0 +1,623 @@
+{
+	"info": {
+		"_postman_id": "13d75dcd-1b35-4e1f-becb-632488f8f4d5",
+		"name": "employee-benefits-tests",
+		"description": "This collection uses external Json data to iterate test with different valid employee data combinations.\nTests refer this Json file to create dynamic request body, or to validate response data.\n\nThe order of test execution should follow the following pattern: \n Add Employee *\n-> Get Employee\n-> Update Employee\n-> Delete Employee\n-> Verify Deleted employee no longer exists\n\n*Note: Employee id returned from this POST request is used in the subsequent tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "EmployeeRequestTests",
+			"item": [
+				{
+					"name": "Add Employee",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try{\r",
+									"    /* Save employee id from response into environment variable\r",
+									"     * This variable is used in the subsequent tests */\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.environment.set('employeeId', responseData.id);\r",
+									"}catch(e){\r",
+									"    console.log(e);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n     \"dependants\": {{dependants}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Employee",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify employee id from response match with id in request\", () => {\r",
+									"    try{\r",
+									"        const responseData = pm.response.json();\r",
+									"        pm.expect(responseData.id).to.eql(pm.environment.get(\"employeeId\"));\r",
+									"    }catch(e){\r",
+									"        console.log(e);\r",
+									"    }\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/{{employeeId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{employeeId}}"
+							]
+						},
+						"description": "Uses employee id from environment variables (variable was set by previous POST request)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Employee",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"/**********************************************************************\r",
+									" * Tests at collection level satisfies validation for this request ****\r",
+									" * ********************************************************************/"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"{{employeeId}}\",\r\n    \"firstName\": \"{{firstName2}}\",\r\n    \"lastName\": \"{{lastName2}}\",\r\n     \"dependants\": {{dependants2}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						},
+						"description": "Uses employee id from environment variables (variable was set by first request at the start of this collection)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Employee",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"console.log(\"Response data length: \" + pm.response.text().length); \r",
+									"pm.test(\"Verify empty body in response\", () => {\r",
+									"    if(pm.response.text().length !== 0)\r",
+									"        pm.expect.fail(\"Expects empty response body. Actual: \" + pm.response.text());    \r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/{{employeeId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{employeeId}}"
+							]
+						},
+						"description": "Uses employee id from environment variables (variable was set by first request at the start of this collection)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Employee: Verify Deleted Employee No Longer Exists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" /* This test validates that deleted employee no longer exists */ \r",
+									"console.log(\"Response data length: \" + pm.response.text().length); \r",
+									" pm.test(\"Verify empty body in response\", () => {\r",
+									"    if(pm.response.text().length !== 0)\r",
+									"        pm.expect.fail(\"Expects empty response body. Actual: \" + pm.response.text());    \r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/{{employeeId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{employeeId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Creates request body from external json file",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"",
+							"pm.test(\"Request Status Code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.property(\"status\", 'OK');",
+							"})",
+							"",
+							"//Skip remaining tests if request is 'Delete'",
+							"if(pm.info.requestName.includes(\"Delete Employee\"))",
+							"    return;",
+							"",
+							"let expectedFirstName;",
+							"let expectedLastName;",
+							"let expectedDependants;",
+							"console.log(\"REquest name: \" + pm.info.requestName);",
+							"console.log(\"Employee id: \" + pm.environment.get(\"employeeId\"));",
+							"try{",
+							"    //Let's get expected employee information from iteration data",
+							"    //Response schema for POST and PUT is same, only difference is the expected value in provide iteration data",
+							"    if(pm.info.requestName == \"Update Employee\"){",
+							"        expectedFirstName = pm.iterationData.get(\"firstName2\");",
+							"        expectedLastName = pm.iterationData.get(\"lastName2\");",
+							"        expectedDependants = pm.iterationData.get(\"dependants2\");",
+							"    }else{    ",
+							"        expectedFirstName = pm.iterationData.get(\"firstName\");",
+							"        expectedLastName = pm.iterationData.get(\"lastName\");",
+							"        expectedDependants = pm.iterationData.get(\"dependants\");",
+							"    }",
+							"",
+							"    //Calculate expected total benefit cost and net pay of the employee",
+							"    const dependentsCost = (pm.environment.get(\"annualDependentCost\") / pm.environment.get(\"payChecks\")) * expectedDependants;",
+							"    let benefitsCost = (pm.environment.get(\"annualBenefitCost\") / pm.environment.get(\"payChecks\") + dependentsCost);",
+							"    const netPay = (pm.iterationData.get(\"gross\") - benefitsCost).toFixed(2);",
+							"    benefitsCost = benefitsCost.toFixed(2);",
+							"",
+							"    console.log(\"Number of dependants: \" + expectedDependants);",
+							"    console.log(\"totalDependentsCost: \" + dependentsCost);",
+							"    console.log(\"totalBenefitsCost: \" + benefitsCost);",
+							"    console.log(\"Netpay: \" + netPay);",
+							"",
+							"    //Process response",
+							"    const responseData = pm.response.json();",
+							"",
+							"    pm.test(\"Employee response: Verify first name is correct\", () => {     ",
+							"        pm.expect(responseData.firstName).to.eql(expectedFirstName);    ",
+							"    })",
+							"    pm.test(\"Employee response: Verify last name is correct\", () => {     ",
+							"        pm.expect(responseData.lastName).to.eql(expectedLastName);",
+							"    })",
+							"    pm.test(\"Employee response: Verify number of dependants is correct\", () => {   ",
+							"        pm.expect(responseData.dependants).to.eql(expectedDependants);    ",
+							"    })",
+							"    pm.test(\"Employee response: Verify salary is correct\", () => {   ",
+							"        pm.expect(responseData.salary).to.eql(pm.iterationData.get(\"salary\"));",
+							"    })",
+							"    pm.test(\"Employee response: Verify gross is correct\", () => {  ",
+							"        pm.expect(responseData.gross).to.eql(pm.iterationData.get(\"gross\"));",
+							"    })",
+							"    pm.test(\"Employee response: Verify calculated benefits cost is correct\", () => { ",
+							"        pm.expect(responseData.benefitsCost.toFixed(2)).to.eql(benefitsCost);    ",
+							"    })",
+							"    pm.test(\"Employee response: Verify calculated net is correct\", () => {     ",
+							"        pm.expect(responseData.net.toFixed(2)).to.eql(netPay);    ",
+							"    })",
+							"}catch(e){",
+							"    console.log(e);",
+							"}"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "ErrorHandlingTests",
+			"item": [
+				{
+					"name": "Handle Invalid Employee Data Entry",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request Status Code is 400\", () => {   \r",
+									"    console.log(\"Response: \" + pm.response);  \r",
+									"    pm.response.to.have.status(400);\r",
+									"    pm.response.to.have.property(\"status\", 'Bad Request');\r",
+									"})\r",
+									"\r",
+									"if(pm.response.code === 400)\r",
+									"{\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.test(\"Verify invalid member correctly identified\", () => {     \r",
+									"        pm.expect(responseData[0].memberNames[0]).to.eql(pm.iterationData.get(\"invalidfield\"));    \r",
+									"    })\r",
+									"\r",
+									"    pm.test(\"Verify error message\", () => {\r",
+									"        pm.expect(responseData[0].errorMessage).to.eql(pm.iterationData.get(\"expectedmessage\"));\r",
+									"    })\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n    \"dependants\": {{dependants}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						},
+						"description": "Creates request body from external json file"
+					},
+					"response": []
+				},
+				{
+					"name": "Handle Delete Request on Non Existing Employee",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request Status Code is 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.property(\"status\", 'OK');\r",
+									"})\r",
+									"/* \r",
+									" * This test validates that deleted request on non existing resource fails gracefully.\r",
+									" * Here, test assumes that server returns empty body when non existing resource is requested \r",
+									" */\r",
+									"console.log(\"Response data length: \" + pm.response.text().length); \r",
+									"pm.test(\"Verify empty body in response\", () => {\r",
+									"    if(pm.response.text().length !== 0)\r",
+									"        pm.expect.fail(\"Expects empty response body. Actual: \" + pm.response.text());    \r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"try{\r",
+									"    /* Save employee id from iterationData into environment variable\r",
+									"     * This variable is used to attempt DELETE request with invalid employee id */\r",
+									"    pm.environment.set('employeeId', pm.iterationData.get(\"id\"));\r",
+									"}catch(e){\r",
+									"    console.log(e);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/{{employeeId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{employeeId}}"
+							]
+						},
+						"description": "Attempts to request DELETE with non existing or invalid employee id, and verifies response is as expected."
+					},
+					"response": []
+				}
+			],
+			"description": "This collection uses external Json data to iterate test with different invalid employee data combinations.\nTests refer this Json file to create dynamic request body, or to validate response data."
+		},
+		{
+			"name": "SchemaValidationTests",
+			"item": [
+				{
+					"name": "Schema Validation Test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//First construct expected schema structure\r",
+									"const expectedSchema = {\r",
+									"    \"type\": \"array\",\r",
+									"    \"items\": {\r",
+									"        \"properties\": {\r",
+									"            \"partitionKey\": {\"type\": \"string\"},\r",
+									"            \"sortKey\": {\"type\": \"string\"},\r",
+									"            \"username\": {\"type\": \"string\"},\r",
+									"            \"id\": {\"type\": \"string\"},\r",
+									"            \"firstName\": {\"type\": \"string\"},\r",
+									"            \"lastName\": {\"type\": \"string\"},\r",
+									"            \"dependants\": {\"type\": \"number\"},\r",
+									"            \"expiration\": {\"type\": \"string\"},\r",
+									"            \"salary\": {\"type\": \"number\"},\r",
+									"            \"gross\": {\"type\": \"number\"},\r",
+									"            \"benefitsCost\": {\"type\": \"number\"},\r",
+									"            \"net\": {\"type\": \"number\"}\r",
+									"        },\r",
+									"        \"required\": [\"partitionKey\",\"sortKey\",\"username\",\"id\",\"firstName\",\"lastName\",\"dependants\",\"expiration\",\"salary\",\"gross\",\"benefitsCost\",\"net\"],\r",
+									"        \"additionalProperties\": false\r",
+									"    }    \r",
+									"};\r",
+									"\r",
+									"pm.test(\"Validate schema structure of GET response\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.jsonSchema(expectedSchema);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "MockServer",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{mockServerUrl}}",
+									"host": [
+										"{{mockServerUrl}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sat, 06 Mar 2021 21:31:02 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Server",
+									"value": "nginx"
+								},
+								{
+									"key": "x-srv-trace",
+									"value": "v=1;t=9ff70ff5230f4615"
+								},
+								{
+									"key": "x-srv-span",
+									"value": "v=1;s=ac62d22114021bbf"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"50-rVaIclNFW4TqtBHUw3LQgNGrsB8\""
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								}
+							],
+							"cookie": [],
+							"body": " [\n     {\n        \"partitionKey\": \"TestUser90\",\n        \"sortKey\": \"05c0bea2-9672-4534-82b5-d89d18c4c1bd\",\n        \"username\": \"TestUser76\",\n        \"id\": \"05c0bea2-9672-4534-82b5-d89d18c4c1bd\",\n        \"firstName\": \"Jack\",\n        \"lastName\": \"Sparrow\",\n        \"dependants\": 0,\n        \"expiration\": \"2021-04-06T20:49:28+00:00\",\n        \"salary\": 52000.0,\n        \"gross\": 2000.0,\n        \"benefitsCost\": 38.46154,\n        \"net\": 1961.53845\n    },\n    {\n        \"partitionKey\": \"TestUser90\",\n        \"sortKey\": \"05c0bea2-9672-4534-82b5-d89d18c4c1bd\",\n        \"username\": \"TestUser76\",\n        \"id\": \"05c0bea2-9672-4534-82b5-d89d18c4c1bd\",\n        \"firstName\": \"Jack\",\n        \"lastName\": \"Sparrow\",\n        \"dependants\": 0,\n        \"expiration\": \"2021-04-06T20:49:28+00:00\",\n        \"salary\": 52000.0,\n        \"gross\": 2000.0,\n        \"benefitsCost\": 38.46154,\n        \"net\": 1200.10\n    }\n]"
+						}
+					]
+				}
+			],
+			"description": "This tests validates response schema structure",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

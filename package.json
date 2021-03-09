@@ -1,0 +1,17 @@
+{
+  "name": "paylocity_benefits_postman_tests",
+  "version": "1.0.0",
+  "description": "Paylocity automation challenge - employee benefits api tests",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "Employee-Request-Tests": "newman run tests/employee-benefits-tests.postman_collection.json --folder EmployeeRequestTests --environment tests/employee-benefits.postman_environment.json --iteration-data testdata/employees.json"
+	"Error-Handling-Tests": "newman run tests/employee-benefits-tests.postman_collection.json --folder ErrorHandlingTests --environment tests/employee-benefits.postman_environment.json --iteration-data testdata/employees-invalid.json"
+	"Schema-Validation-Tests": "newman run tests/employee-benefits-tests.postman_collection.json --folder SchemaValidationTests --environment tests/employee-benefits.postman_environment.json"
+  },
+  "author": "Robham Robham",
+  "dependencies": {
+    "newman": "^5.2.2"
+  }
+}

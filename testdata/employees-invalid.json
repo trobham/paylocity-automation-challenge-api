@@ -1,0 +1,50 @@
+[
+	{		
+		"id": "",
+		"firstName": "Jack",
+		"lastName": "Sparrow",
+		"dependants": -1,
+		"invalidfield" : "Dependants",
+		"expectedmessage": "The field Dependants must be between 0 and 32."
+	},
+	{	
+		"id": "123456",
+		"firstName": "Hector",
+		"lastName": "Barbossa",
+		"dependants": 33,
+		"invalidfield" : "Dependants",
+		"expectedmessage": "The field Dependants must be between 0 and 32."
+	},
+	{	
+		"id": 123456,
+		"firstName": "",
+		"lastName": "Smyth",
+		"dependants": 0,
+		"invalidfield" : "FirstName",
+		"expectedmessage": "The FirstName field is required."
+	},
+	{	
+		"id": "06e489db-",		
+		"firstName": "Will",
+		"lastName": "Turner",
+		"dependants": "one",
+		"invalidfield" : "Dependants",
+		"expectedmessage": "The field Dependants must be between 0 and 32."
+	},
+	{
+		"id": "06e489db-757f-4bc0-920d-702791b4021c",
+		"firstName": "1234",
+		"lastName": "Gibbs",
+		"dependants": 0,
+		"invalidfield" : "FirstName",
+		"expectedmessage": "Invalid data type. Numbers are not valid value for 'firstName' field."
+	},
+	{
+		"id": "06e489db-757f-4bc0-920d-70279",
+		"firstName": "Carina",
+		"lastName": "5678",
+		"dependants": 0,
+		"invalidfield" : "LastName",
+		"expectedmessage": "Invalid data type. Numbers are not valid value for 'lastName' field."
+	}
+]
